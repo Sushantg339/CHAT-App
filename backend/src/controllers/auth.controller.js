@@ -1,5 +1,8 @@
+import { sendWelcomeEmail } from "../emails/emailHandlers.js";
+import { ENV } from "../lib/env.js";
 import { generateToken } from "../lib/utils.js";
 import User from "../models/user.model.js";
+
 import bcrypt from 'bcryptjs'
 export const signupController = async(req , res)=>{
     const {fullName , email , password} = req.body
@@ -48,6 +51,12 @@ export const signupController = async(req , res)=>{
                 fullName : savedUser.fullName,
                 email : savedUser.email
             })
+
+            try {
+                await sendWelcomeEmail(savedUser.email , savedUser.fullName , ENV.CLIENT_URL)
+            } catch (error) {
+                
+            }
 
         }else{
             res.status(400).json({
